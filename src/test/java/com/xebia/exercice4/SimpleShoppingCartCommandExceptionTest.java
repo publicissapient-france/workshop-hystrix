@@ -8,8 +8,6 @@ public class SimpleShoppingCartCommandExceptionTest {
 
     @Test(expected = HystrixBadRequestException.class)
     public void should_test_negative_user_id_call() {
-        ShoppingCart shoppingCart = new SimpleShoppingCartCommandException(-1).execute();
-
-
+        new SimpleShoppingCartCommandException(-1).execute();
     }
 }
