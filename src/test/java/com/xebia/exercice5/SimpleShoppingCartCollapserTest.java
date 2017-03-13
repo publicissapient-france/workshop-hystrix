@@ -1,6 +1,7 @@
 package com.xebia.exercice5;
 
 import java.util.concurrent.Future;
+
 import org.junit.Test;
 import com.netflix.hystrix.HystrixEventType;
 import com.netflix.hystrix.HystrixInvokableInfo;

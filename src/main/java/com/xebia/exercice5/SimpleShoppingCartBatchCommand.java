@@ -3,6 +3,7 @@ package com.xebia.exercice5;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.netflix.hystrix.HystrixCommand;
 import com.xebia.ShoppingCart;
 
@@ -22,7 +23,7 @@ public class SimpleShoppingCartBatchCommand extends HystrixCommand<List<Shopping
 
         List<ShoppingCart> carts = new ArrayList<>();
 
-        for (Integer id:ids) {
+        for (Integer id : ids) {
             carts.add(new ShoppingCart(id, "User", new BigDecimal(100), "description panier"));
         }
 

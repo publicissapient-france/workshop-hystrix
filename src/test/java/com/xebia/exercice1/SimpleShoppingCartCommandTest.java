@@ -1,6 +1,7 @@
 package com.xebia.exercice1;
 
 import java.util.concurrent.Future;
+
 import org.junit.Test;
 
 import com.xebia.ShoppingCart;

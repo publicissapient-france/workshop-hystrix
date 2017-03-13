@@ -1,6 +1,7 @@
 package com.xebia.exercice4;
 
 import java.math.BigDecimal;
+
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
@@ -17,7 +18,7 @@ public class SimpleShoppingCartCommandException extends HystrixCommand<ShoppingC
 
     @Override
     protected ShoppingCart run() throws Exception {
-        if(userId <= 0) {
+        if (userId <= 0) {
             throw new HystrixBadRequestException("User ID chas to be superior to 0 ");
         }
 

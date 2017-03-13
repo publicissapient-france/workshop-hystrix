@@ -1,6 +1,7 @@
 package com.xebia.exercice2;
 
 import java.math.BigDecimal;
+
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.xebia.ShoppingCart;

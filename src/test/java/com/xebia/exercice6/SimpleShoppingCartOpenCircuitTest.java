@@ -15,7 +15,7 @@ public class SimpleShoppingCartOpenCircuitTest {
 
         SimpleShoppingCartOpenCircuit simpleShoppingCartOpenCircuit = new SimpleShoppingCartOpenCircuit(2);
         ShoppingCart shoppingCart2 = simpleShoppingCartOpenCircuit.execute();
-        
+
         assertThat(shoppingCart2.getId()).isEqualTo(0);
 
         new SimpleShoppingCartOpenCircuit(3).execute();

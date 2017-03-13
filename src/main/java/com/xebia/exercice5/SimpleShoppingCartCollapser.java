@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import com.netflix.hystrix.HystrixCollapser;
 import com.netflix.hystrix.HystrixCommand;
 import com.xebia.ShoppingCart;
@@ -26,7 +27,7 @@ public class SimpleShoppingCartCollapser extends HystrixCollapser<List<ShoppingC
         final List<Integer> ids = new ArrayList<>(collapsedRequests.size());
 
         ids.addAll(collapsedRequests.stream().map(CollapsedRequest::getArgument)
-                .collect(Collectors.toList()));
+            .collect(Collectors.toList()));
 
         return new SimpleShoppingCartBatchCommand(ids);
     }
