@@ -11,7 +11,7 @@ public class SimpleShoppingCartFailureCommandTest {
     public void should_test_synchronous_call() {
         ShoppingCart shoppingCart = new SimpleShoppingCartFailureCommand().execute();
 
-        assertThat(shoppingCart.getDescritpion()).isEqualTo("description failure");
+        assertThat(shoppingCart.getDescription()).isEqualTo("description failure");
         assertThat(shoppingCart.getUser()).isEqualTo("Anonymous user");
     }
 

@@ -16,14 +16,14 @@ public class SimpleShoppingCartCommandTest {
     public void should_test_synchronous_call() {
         ShoppingCart shoppingCart = new SimpleShoppingCartCommand().execute();
 
-        assertThat(shoppingCart.getDescritpion()).isEqualTo("description panier");
+        assertThat(shoppingCart.getDescription()).isEqualTo("description panier");
     }
 
     @Test
     public void should_test_asynchronous_call() throws Exception {
         Future<ShoppingCart> shoppingCart = new SimpleShoppingCartCommand().queue();
 
-        assertThat(shoppingCart.get().getDescritpion()).isEqualTo("description panier");
+        assertThat(shoppingCart.get().getDescription()).isEqualTo("description panier");
     }
 
     @Test
@@ -33,7 +33,7 @@ public class SimpleShoppingCartCommandTest {
         ShoppingCart shoppingCart = obsShoppingCart.toBlocking().single();
         assertThat(shoppingCart.getUser()).isEqualTo("User");
 
-        obsShoppingCart.subscribe(shopCart -> assertThat(shopCart.getDescritpion()).isEqualTo("description panier"), Throwable::printStackTrace);
+        obsShoppingCart.subscribe(shopCart -> assertThat(shopCart.getDescription()).isEqualTo("description panier"), Throwable::printStackTrace);
     }
 
 }

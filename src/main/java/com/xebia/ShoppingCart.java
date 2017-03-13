@@ -7,13 +7,13 @@ public class ShoppingCart {
     private final Integer id;
     private final String user;
     private final BigDecimal amount;
-    private final String descritpion;
+    private final String description;
 
     public ShoppingCart(Integer id, String user, BigDecimal amount, String description) {
         this.id = id;
         this.user = user;
         this.amount = amount;
-        this.descritpion = description;
+        this.description = description;
     }
 
     public Integer getId() {
@@ -28,7 +28,7 @@ public class ShoppingCart {
         return amount;
     }
 
-    public String getDescritpion() {
-        return descritpion;
+    public String getDescription() {
+        return description;
     }
 }
