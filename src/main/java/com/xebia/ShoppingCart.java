@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 
 public class ShoppingCart {
 
-    private Integer id;
-    private String user;
-    private BigDecimal amount;
-    private String descritpion;
+    private final Integer id;
+    private final String user;
+    private final BigDecimal amount;
+    private final String descritpion;
 
-    public ShoppingCart(final Integer id, final String user, final BigDecimal amount, final String description) {
+    public ShoppingCart(Integer id, String user, BigDecimal amount, String description) {
         this.id = id;
         this.user = user;
         this.amount = amount;
