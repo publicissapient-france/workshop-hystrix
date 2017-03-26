@@ -12,40 +12,40 @@ public class MessageClientWithCircuitBreakerTest {
 
     private final AtomicInteger count = new AtomicInteger(0);
 
-    private final MessageApi messageApi = () -> {
+    private final MessageApi messageApi = userName -> {
         Thread.sleep(500);
 
         if (count.getAndIncrement() < 6) {
             throw new RuntimeException("Failed");
         }
 
-        return "Success";
+        return "Hello " + userName;
     };
 
     @Test
     public void should_return_message_from_api_using_circuit_breaker_strategy() throws Exception {
         // given
-        String expectedFallbackMessage = "Service Unavailable";
+        String expectedFallbackMessage = "Unavailable";
         MessageClientWithCircuitBreaker messageClientWithCircuitBreaker = new MessageClientWithCircuitBreaker(messageApi);
 
         // when 6 failures
         IntStream.range(0, 6).forEach(n ->
-            assertThat(messageClientWithCircuitBreaker.getMessage())
+            assertThat(messageClientWithCircuitBreaker.getMessage("Bob"))
                 .withFailMessage("Client should return fallback message for Api failures")
                 .isEqualTo(expectedFallbackMessage));
 
         // when circuit is open everything should fallback event tough Api is fine
         IntStream.range(7, 10).forEach(n ->
-            assertThat(messageClientWithCircuitBreaker.getMessage())
+            assertThat(messageClientWithCircuitBreaker.getMessage("Alice"))
                 .withFailMessage("Circuit should be opened after 5 failures out of 5 requests")
                 .isEqualTo(expectedFallbackMessage));
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
 
         // when circuit is closed after a sleep of more than 1s
-        assertThat(messageClientWithCircuitBreaker.getMessage())
+        assertThat(messageClientWithCircuitBreaker.getMessage("Eve"))
             .withFailMessage("Circuit should be closed 1s after being opened")
-            .isEqualTo("Success");
+            .isEqualTo("Hello Eve");
     }
 
 }

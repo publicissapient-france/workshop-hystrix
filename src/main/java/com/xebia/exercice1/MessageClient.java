@@ -7,21 +7,21 @@ import com.xebia.MessageApi;
 @SuppressWarnings("WeakerAccess")
 public class MessageClient {
 
-    private final HystrixCommand<String> command;
+    private final MessageApi messageApi;
 
     public MessageClient(MessageApi messageApi) {
-
-        this.command = new HystrixCommand<String>(HystrixCommandGroupKey.Factory.asKey("Message")) {
-            @Override
-            public String run() throws Exception {
-                return messageApi.getMessage();
-            }
-        };
-
+        this.messageApi = messageApi;
     }
 
-    public String getMessage() {
-        return command.execute();
+    public String getMessage(String userName) {
+
+        return new HystrixCommand<String>(HystrixCommandGroupKey.Factory.asKey("Message")) {
+            @Override
+            public String run() throws Exception {
+                return messageApi.getMessage(userName);
+            }
+        }.execute();
+
     }
 
 }

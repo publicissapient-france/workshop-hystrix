@@ -3,7 +3,7 @@ package com.xebia.exercice5;
 import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
-import com.xebia.UserMessageApi;
+import com.xebia.MessageApi;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.when;
 
 public class MessageApiCollapserTest {
 
-    private final UserMessageApi messageApi = mock(UserMessageApi.class);
+    private final MessageApi messageApi = mock(MessageApi.class);
 
     @Before
     public void setUp() throws Exception {

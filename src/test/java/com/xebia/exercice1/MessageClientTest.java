@@ -1,6 +1,6 @@
 package com.xebia.exercice1;
 
-import com.xebia.MessageApi;
+import com.xebia.SucceedingMessageApi;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,14 +10,14 @@ public class MessageClientTest {
     @Test
     public void should_return_message_using_api() {
         // given
-        String expectedMessage = "Hello Command World";
-        MessageApi messageApi = () -> expectedMessage;
+        SucceedingMessageApi messageApi = new SucceedingMessageApi();
         MessageClient messageClient = new MessageClient(messageApi);
 
         // when
-        String result = messageClient.getMessage();
+        String result = messageClient.getMessage("Bob");
 
         // then
-        assertThat(result).isEqualTo(expectedMessage);
+        assertThat(result).isEqualTo("Hello Bob");
     }
+
 }

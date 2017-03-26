@@ -3,17 +3,17 @@ package com.xebia.exercice3;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
-import com.xebia.UserMessageApi;
+import com.xebia.MessageApi;
 
 @SuppressWarnings("WeakerAccess")
 public class MessageClientWithCache {
 
-    private final UserMessageApi userMessageApi;
+    private final MessageApi messageApi;
 
     private final HystrixCommandGroupKey commandGroupKey = Factory.asKey("MessageWithCache");
 
-    public MessageClientWithCache(UserMessageApi userMessageApi) {
-        this.userMessageApi = userMessageApi;
+    public MessageClientWithCache(MessageApi messageApi) {
+        this.messageApi = messageApi;
     }
 
     public String getMessage(String userId) {
@@ -22,7 +22,7 @@ public class MessageClientWithCache {
 
             @Override
             public String run() throws Exception {
-                return userMessageApi.getMessage(userId);
+                return messageApi.getMessage(userId);
             }
 
             @Override

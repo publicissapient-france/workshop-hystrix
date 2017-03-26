@@ -2,7 +2,11 @@ package com.xebia.exercice2;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandProperties;
+import com.xebia.FailingMessageApi;
 import com.xebia.MessageApi;
+import com.xebia.SlowMessageApi;
+import com.xebia.SucceedingMessageApi;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -11,51 +15,50 @@ import static org.assertj.core.api.Assertions.fail;
 public class MessageClientWithFallbackTest {
 
     @Test
-    public void should_return_message_from_api_when_api_is_fine() {
+    public void should_return_message_from_api_when_api_is_fine() throws Exception {
         // given
-        String expectedMessage = "Hello World";
-        MessageApi fineMessageApi = () -> expectedMessage;
-        MessageClientWithFallback messageClientWithFallback = new MessageClientWithFallback(fineMessageApi);
+        MessageApi messageApi = new SucceedingMessageApi();
+        MessageClientWithFallback messageClientWithFallback = new MessageClientWithFallback(messageApi);
 
         // when
-        String result = messageClientWithFallback.getMessage();
+        String result = messageClientWithFallback.getMessage("Bob");
 
         // then
-        assertThat(result).isEqualTo(expectedMessage);
+        assertThat(result).isEqualTo("Hello Bob");
     }
 
     @Test
     public void should_return_fallback_message_when_api_raises_an_exception() {
         // given
-        MessageApi downMessageApi = () -> {
-            throw new Exception("MessageApi is unavailable");
-        };
-        MessageClientWithFallback messageClientWithFallback = new MessageClientWithFallback(downMessageApi);
+        MessageApi messageApi = new FailingMessageApi();
+        MessageClientWithFallback messageClientWithFallback = new MessageClientWithFallback(messageApi);
 
         // when
-        String result = messageClientWithFallback.getMessage();
+        String result = messageClientWithFallback.getMessage("Bob");
 
         // then
-        assertThat(result).isEqualTo("Service Unavailable");
+        assertThat(result).isEqualTo("Unavailable");
     }
 
     @Test
     public void should_return_fallback_message_when_api_is_too_slow() {
         // given
         final String unexpectedMessage = "MessageClient does not properly timeout when MessageApi is too slow";
-        MessageApi slowMessageApi = () -> {
-            Thread.sleep(100_000);
-            return unexpectedMessage;
-        };
-        MessageClientWithFallback messageClientWithFallback = new MessageClientWithFallback(slowMessageApi);
+        MessageApi messageApi = new SlowMessageApi();
+        MessageClientWithFallback messageClientWithFallback = new MessageClientWithFallback(messageApi);
 
         // when (execute within 500ms timeout)
-        int timeout = 500;
-        String result = new HystrixCommand<String>(HystrixCommandGroupKey.Factory.asKey("Test"), timeout) {
+        HystrixCommand.Setter setter = HystrixCommand.Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Test"))
+            .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                .withExecutionTimeoutInMilliseconds(500)
+            );
+
+        String result = new HystrixCommand<String>(setter) {
 
             @Override
             public String run() throws Exception {
-                return messageClientWithFallback.getMessage();
+                return messageClientWithFallback.getMessage("Bob");
             }
 
             @Override
@@ -69,7 +72,7 @@ public class MessageClientWithFallbackTest {
         if (unexpectedMessage.equals(result)) {
             fail(unexpectedMessage);
         } else {
-            assertThat(result).isEqualTo("Service Unavailable");
+            assertThat(result).isEqualTo("Unavailable");
         }
     }
 

@@ -2,36 +2,40 @@ package com.xebia.exercice2;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
 @SuppressWarnings("WeakerAccess")
 public class MessageClientWithFallback {
 
-    private final HystrixCommand<String> command;
+    private final MessageApi messageApi;
 
     public MessageClientWithFallback(MessageApi messageApi) {
+        this.messageApi = messageApi;
+    }
 
-        int timeout = 300;
-        HystrixCommandGroupKey commandGroupKey = HystrixCommandGroupKey.Factory.asKey("MessageWithFallback");
+    public String getMessage(String userName) {
 
-        this.command = new HystrixCommand<String>(commandGroupKey, timeout) {
+        HystrixCommand.Setter setter = HystrixCommand.Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithFallback"))
+            .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+                .withExecutionTimeoutInMilliseconds(300)
+            );
+
+        return new HystrixCommand<String>(setter) {
 
             @Override
             public String run() throws Exception {
-                return messageApi.getMessage();
+                return messageApi.getMessage(userName);
             }
 
             @Override
             public String getFallback() {
-                return "Service Unavailable";
+                return "Unavailable";
             }
 
-        };
+        }.execute();
 
-    }
-
-    public String getMessage() {
-        return command.execute();
     }
 
 }

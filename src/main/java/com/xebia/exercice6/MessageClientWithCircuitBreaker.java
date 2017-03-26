@@ -12,7 +12,7 @@ public class MessageClientWithCircuitBreaker {
 
     private final MessageApi messageApi;
 
-    private final Setter key = Setter
+    private final Setter setter = Setter
         .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Message"))
         .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
         .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
@@ -23,18 +23,18 @@ public class MessageClientWithCircuitBreaker {
         this.messageApi = messageApi;
     }
 
-    public String getMessage() {
+    public String getMessage(String userId) {
 
-        return new HystrixCommand<String>(key) {
+        return new HystrixCommand<String>(setter) {
 
             @Override
             public String run() throws Exception {
-                return messageApi.getMessage();
+                return messageApi.getMessage(userId);
             }
 
             @Override
             public String getFallback() {
-                return "Service Unavailable";
+                return "Unavailable";
             }
 
         }.execute();
