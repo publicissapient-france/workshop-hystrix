@@ -12,18 +12,18 @@ public class MessageClientWithCircuitBreaker {
 
     private final MessageApi messageApi;
 
-    private final Setter setter = Setter
-        .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Message"))
-        .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
-        .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
-            .withCircuitBreakerRequestVolumeThreshold(5)
-            .withCircuitBreakerSleepWindowInMilliseconds(1_000));
-
     public MessageClientWithCircuitBreaker(MessageApi messageApi) {
         this.messageApi = messageApi;
     }
 
     public String getMessage(String userId) {
+
+        Setter setter = Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithCircuitBreaker"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
+            .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
+                .withCircuitBreakerRequestVolumeThreshold(5)
+                .withCircuitBreakerSleepWindowInMilliseconds(1_000));
 
         return new HystrixCommand<String>(setter) {
 

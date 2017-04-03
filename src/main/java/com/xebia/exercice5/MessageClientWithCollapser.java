@@ -34,7 +34,7 @@ public class MessageClientWithCollapser {
         @Override
         public HystrixCommand<Map<String, String>> createCommand(Collection<CollapsedRequest<String, String>> requests) {
 
-            return new HystrixCommand<Map<String, String>>(Factory.asKey("Message")) {
+            return new HystrixCommand<Map<String, String>>(Factory.asKey("MessageWithCollapser")) {
 
                 @Override
                 public Map<String, String> run() throws Exception {
