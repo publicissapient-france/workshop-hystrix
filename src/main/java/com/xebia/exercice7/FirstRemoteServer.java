@@ -1,6 +1,5 @@
 package com.xebia.exercice7;
 
-import org.junit.rules.ExternalResource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,18 +7,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
-public class FirstRemoteServer extends ExternalResource {
+public class FirstRemoteServer {
 
-    @Override
-    protected void before() throws Throwable {
+    protected void start() {
         SpringApplication.run(FirstRemoteServer.class, "--server.port=8081");
     }
 
-    @Override
-    protected void after() {
+    protected void stop() {
         // stop the server
     }
-
 
     @RestController
     @RequestMapping("/first/messages")

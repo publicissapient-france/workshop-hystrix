@@ -2,7 +2,6 @@ package com.xebia.exercice7;
 
 
 import com.netflix.hystrix.*;
-import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,20 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
-public class MyAppServer extends ExternalResource {
+public class MyAppServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyAppServer.class);
 
     @Autowired
     private RestTemplate restTemplate;
 
-    @Override
-    protected void before() {
-        SpringApplication.run(MyAppServer.class, "--server.tomcat.max-threads=10");
+    protected void start() {
+        SpringApplication.run(MyAppServer.class, "--server.tomcat.max-threads=9");
     }
 
-    @Override
-    protected void after() {
+    protected void stop() {
         // stop the server
     }
 

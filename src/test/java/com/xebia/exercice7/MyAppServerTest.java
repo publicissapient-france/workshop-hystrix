@@ -24,13 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MyAppServerTest {
 
     @ClassRule
-    public static FirstRemoteServer firstRemoteServer = new FirstRemoteServer();
-
-    @ClassRule
-    public static SecondRemoteServer secondRemoteServer = new SecondRemoteServer();
-
-    @ClassRule
-    public static MyAppServer appServer = new MyAppServer();
+    public static ServersStarter servers = new ServersStarter();
 
     private ExecutorService executorService = Executors.newFixedThreadPool(20);
 
@@ -39,7 +33,7 @@ public class MyAppServerTest {
     @Before
     public void setup() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(4 * 1000);
+        factory.setReadTimeout(5 * 1000);
         factory.setConnectTimeout(2000);
 
         restTemplate = new RestTemplate(factory);
