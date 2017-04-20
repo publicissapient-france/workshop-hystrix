@@ -26,8 +26,8 @@ public class MyAppServer {
         public MessageController() {
 
             SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-            factory.setReadTimeout(4 * 1000);
-            factory.setConnectTimeout(2000);
+            factory.setReadTimeout(4_000);
+            factory.setConnectTimeout(2_000);
 
             RestTemplate restTemplate = new RestTemplate(factory);
 

@@ -30,8 +30,8 @@ public class MyAppServerTest {
 
     public MyAppServerTest() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(5 * 1000);
-        factory.setConnectTimeout(2000);
+        factory.setReadTimeout(5_000);
+        factory.setConnectTimeout(2_000);
         restTemplate = new RestTemplate(factory);
     }
 
@@ -84,7 +84,7 @@ public class MyAppServerTest {
 
     private class GetMessageTask implements Callable<String> {
 
-        private String url;
+        private final String url;
 
         private GetMessageTask(String url) {
             this.url = url;
