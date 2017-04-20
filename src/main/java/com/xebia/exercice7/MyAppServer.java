@@ -11,8 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,20 +36,22 @@ public class MyAppServer {
     @RequestMapping("/messages")
     private class MessageController {
 
-        @Autowired
-        @Qualifier("firstRemoteServerClient")
-        private RemoteServerClient firstRemoteServerClient;
+        private final RemoteServerClient firstRemoteServerClient;
 
-        @Autowired
-        @Qualifier("secondRemoteServerClient")
-        private RemoteServerClient secondRemoteServerClient;
+        private final RemoteServerClient secondRemoteServerClient;
 
-        @RequestMapping(value = "/first", method = RequestMethod.GET)
+        public MessageController(@Qualifier("firstRemoteServerClient") RemoteServerClient firstRemoteServerClient,
+                                 @Qualifier("secondRemoteServerClient") RemoteServerClient secondRemoteServerClient) {
+            this.firstRemoteServerClient = firstRemoteServerClient;
+            this.secondRemoteServerClient = secondRemoteServerClient;
+        }
+
+        @GetMapping("/first")
         public String getMessageFromRemote() {
             return firstRemoteServerClient.getMessage();
         }
 
-        @RequestMapping(value = "/second", method = RequestMethod.GET)
+        @GetMapping("/second")
         public String getMessage() {
             return secondRemoteServerClient.getMessage();
         }
@@ -64,18 +66,16 @@ public class MyAppServer {
 
         public RemoteServerClient(String url) {
             this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
-                                               .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
-                                               .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter()
-                                                                                                           .withCoreSize(
-                                                                                                               5))
-                                               .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
-                                                                                                     .withExecutionTimeoutInMilliseconds(
-                                                                                                         5 * 1000));
+                .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
+                .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(5))
+                .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(5_000));
             this.url = url;
         }
 
         public String getMessage() {
+
             return new HystrixCommand<String>(setter) {
+
                 @Override
                 protected String run() throws Exception {
                     return restTemplate.getForEntity(url + "/messages", String.class).getBody();
@@ -86,7 +86,6 @@ public class MyAppServer {
                     LOGGER.error(getExecutionException().getLocalizedMessage(), getExecutionException());
                     return String.format("Remote server %s is unavailable", url);
                 }
-
 
             }.execute();
         }
