@@ -44,14 +44,15 @@ public class MyAppServerTest {
     public void should_return_message_from_second_server_when_first_server_becomes_slow() throws InterruptedException {
 
         // given
-        List<GetMessageTask> slowTasks = Stream.generate(() -> new GetMessageTask("http://localhost:8080/messages/first"))
-            .limit(10)
-            .collect(Collectors.toList());
+        Stream<GetMessageTask> slowTasks = Stream
+            .generate(() -> new GetMessageTask("http://localhost:8080/messages/first"))
+            .limit(10);
 
-        List<GetMessageTask> fastTasks = Stream.generate(() -> new GetMessageTask(
-            "http://localhost:8080/messages/second")).limit(5).collect(Collectors.toList());
+        Stream<GetMessageTask> fastTasks = Stream
+            .generate(() -> new GetMessageTask("http://localhost:8080/messages/second"))
+            .limit(5);
 
-        List<GetMessageTask> tasks = Stream.concat(slowTasks.stream(), fastTasks.stream()).collect(Collectors.toList());
+        List<GetMessageTask> tasks = Stream.concat(slowTasks, fastTasks).collect(Collectors.toList());
 
         // when
         List<Future<String>> futures = executorService.invokeAll(tasks);
