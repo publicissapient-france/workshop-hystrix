@@ -1,15 +1,10 @@
 package com.xebia.exercice7;
 
-
 import com.netflix.hystrix.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,9 +16,6 @@ public class MyAppServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyAppServer.class);
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     protected void start() {
         SpringApplication.run(MyAppServer.class, "--server.tomcat.max-threads=9");
     }
@@ -34,37 +26,46 @@ public class MyAppServer {
 
     @RestController
     @RequestMapping("/messages")
-    private class MessageController {
+    public class MessageController {
 
-        private final RemoteServerClient firstRemoteServerClient;
+        private final RemoteServerClient firstClient;
 
-        private final RemoteServerClient secondRemoteServerClient;
+        private final RemoteServerClient secondClient;
 
-        public MessageController(@Qualifier("firstRemoteServerClient") RemoteServerClient firstRemoteServerClient,
-                                 @Qualifier("secondRemoteServerClient") RemoteServerClient secondRemoteServerClient) {
-            this.firstRemoteServerClient = firstRemoteServerClient;
-            this.secondRemoteServerClient = secondRemoteServerClient;
+        public MessageController() {
+
+            SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+            factory.setReadTimeout(4 * 1000);
+            factory.setConnectTimeout(2000);
+
+            RestTemplate restTemplate = new RestTemplate(factory);
+
+            this.firstClient = new RemoteServerClient("http://localhost:8081/first", restTemplate);
+            this.secondClient = new RemoteServerClient("http://localhost:8082/second", restTemplate);
         }
 
         @GetMapping("/first")
-        public String getMessageFromRemote() {
-            return firstRemoteServerClient.getMessage();
+        public String getFirstMessage() {
+            return firstClient.getMessage();
         }
 
         @GetMapping("/second")
-        public String getMessage() {
-            return secondRemoteServerClient.getMessage();
+        public String getSecondMessage() {
+            return secondClient.getMessage();
         }
-    }
 
+    }
 
     private class RemoteServerClient {
 
-        private String url;
+        private final String url;
 
-        private HystrixCommand.Setter setter;
+        private final RestTemplate restTemplate;
 
-        public RemoteServerClient(String url) {
+        private final HystrixCommand.Setter setter;
+
+        public RemoteServerClient(String url, RestTemplate restTemplate) {
+            this.restTemplate = restTemplate;
             this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
                 .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(5))
@@ -89,29 +90,6 @@ public class MyAppServer {
 
             }.execute();
         }
-    }
-
-    @Bean("firstRemoteServerClient")
-    RemoteServerClient firstRemoteServerClient() {
-        return new RemoteServerClient("http://localhost:8081/first");
-    }
-
-    @Bean("secondRemoteServerClient")
-    RemoteServerClient secondRemoteServerClient() {
-        return new RemoteServerClient("http://localhost:8082/second");
-    }
-
-    @Bean
-    RestTemplate restTemplate(ClientHttpRequestFactory factory) {
-        return new RestTemplate(factory);
-    }
-
-    @Bean
-    ClientHttpRequestFactory clientHttpRequestFactory() {
-        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setReadTimeout(4 * 1000);
-        factory.setConnectTimeout(2000);
-        return factory;
     }
 
 }
