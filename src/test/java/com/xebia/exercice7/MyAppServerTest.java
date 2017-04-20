@@ -20,9 +20,9 @@ public class MyAppServerTest {
 
     @Rule
     public TestRule testRuleChain = RuleChain
-        .outerRule(new ServersStarter(MyAppServer.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
-        .around(new ServersStarter(SecondRemoteServer.class, "--server.port=8081"))
-        .around(new ServersStarter(FirstRemoteServer.class, "--server.port=8082"));
+        .outerRule(new SpringBootRule(MyAppServer.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
+        .around(new SpringBootRule(SecondRemoteServer.class, "--server.port=8081"))
+        .around(new SpringBootRule(FirstRemoteServer.class, "--server.port=8082"));
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(20);
 
