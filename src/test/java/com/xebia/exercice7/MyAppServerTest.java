@@ -2,40 +2,36 @@ package com.xebia.exercice7;
 
 import org.assertj.core.api.Condition;
 import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.rules.RuleChain;
+import org.junit.rules.TestRule;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 public class MyAppServerTest {
 
-    @ClassRule
-    public static ServersStarter servers = new ServersStarter();
+    @Rule
+    public TestRule testRuleChain = RuleChain
+        .outerRule(new ServersStarter(MyAppServer.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
+        .around(new ServersStarter(SecondRemoteServer.class, "--server.port=8081"))
+        .around(new ServersStarter(FirstRemoteServer.class, "--server.port=8082"));
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(20);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(20);
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    @Before
-    public void setup() {
+    public MyAppServerTest() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setReadTimeout(5 * 1000);
         factory.setConnectTimeout(2000);
-
         restTemplate = new RestTemplate(factory);
     }
 
@@ -47,20 +43,20 @@ public class MyAppServerTest {
     @Test
     public void should_return_message_from_second_server_when_first_server_becomes_slow() throws InterruptedException {
 
-        // Given
+        // given
         List<GetMessageTask> slowTasks = Stream.generate(() -> new GetMessageTask("http://localhost:8080/messages/first"))
-                                               .limit(10)
-                                               .collect(Collectors.toList());
+            .limit(10)
+            .collect(Collectors.toList());
 
         List<GetMessageTask> fastTasks = Stream.generate(() -> new GetMessageTask(
             "http://localhost:8080/messages/second")).limit(5).collect(Collectors.toList());
 
         List<GetMessageTask> tasks = Stream.concat(slowTasks.stream(), fastTasks.stream()).collect(Collectors.toList());
 
-        // When
+        // when
         List<Future<String>> futures = executorService.invokeAll(tasks);
 
-        // Then
+        // then
         assertThat(futures).extracting(future -> {
             try {
                 return future.get();
@@ -87,14 +83,9 @@ public class MyAppServerTest {
 
     private class GetMessageTask implements Callable<String> {
 
-        private final Logger logger = LoggerFactory.getLogger(GetMessageTask.class);
-
-        private String taskId;
-
         private String url;
 
         private GetMessageTask(String url) {
-            this.taskId = UUID.randomUUID().toString();
             this.url = url;
         }
 

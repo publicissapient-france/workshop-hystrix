@@ -1,27 +1,33 @@
 package com.xebia.exercice7;
 
-
 import org.junit.rules.ExternalResource;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import java.util.Optional;
 
 public class ServersStarter extends ExternalResource {
 
-    private FirstRemoteServer firstRemoteServer = new FirstRemoteServer();
+    private final Class springBootClass;
 
-    private SecondRemoteServer secondRemoteServer = new SecondRemoteServer();
+    private final String[] springBootArgs;
 
-    private MyAppServer appServer = new MyAppServer();
+    private ConfigurableApplicationContext configurableApplicationContext = null;
+
+    ServersStarter(Class springBootClass, String... springBootArgs) {
+        this.springBootClass = springBootClass;
+        this.springBootArgs = springBootArgs;
+    }
 
     @Override
     protected void before() {
-        firstRemoteServer.start();
-        secondRemoteServer.start();
-        appServer.start();
+        configurableApplicationContext = SpringApplication.run(springBootClass, springBootArgs);
     }
 
     @Override
     protected void after() {
-        firstRemoteServer.stop();
-        secondRemoteServer.stop();
-        appServer.stop();
+        Optional
+            .ofNullable(configurableApplicationContext)
+            .ifPresent(ConfigurableApplicationContext::stop);
     }
 }

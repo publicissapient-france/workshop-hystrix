@@ -3,7 +3,6 @@ package com.xebia.exercice7;
 import com.netflix.hystrix.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,14 +14,6 @@ import org.springframework.web.client.RestTemplate;
 public class MyAppServer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyAppServer.class);
-
-    protected void start() {
-        SpringApplication.run(MyAppServer.class, "--server.tomcat.max-threads=9");
-    }
-
-    protected void stop() {
-        // stop the server
-    }
 
     @RestController
     @RequestMapping("/messages")
