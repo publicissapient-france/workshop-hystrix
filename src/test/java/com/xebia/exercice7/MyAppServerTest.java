@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MyAppServerTest {
 
     @Rule
-    public TestRule testRuleChain = RuleChain
+    public final TestRule testRuleChain = RuleChain
         .outerRule(new SpringBootRule(MyAppServer.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
         .around(new SpringBootRule(SecondRemoteServer.class, "--server.port=8081"))
         .around(new SpringBootRule(FirstRemoteServer.class, "--server.port=8082"));
@@ -44,57 +44,31 @@ public class MyAppServerTest {
     public void should_return_message_from_second_server_when_first_server_becomes_slow() throws InterruptedException {
 
         // given
-        Stream<GetMessageTask> slowTasks = Stream
-            .generate(() -> new GetMessageTask("http://localhost:8080/messages/first"))
-            .limit(10);
+        Stream<Callable<String>> slowTasks = Stream.generate(() -> request("http://localhost:8080/messages/first")).limit(10);
 
-        Stream<GetMessageTask> fastTasks = Stream
-            .generate(() -> new GetMessageTask("http://localhost:8080/messages/second"))
-            .limit(5);
+        Stream<Callable<String>> fastTasks = Stream.generate(() -> request("http://localhost:8080/messages/second")).limit(5);
 
-        List<GetMessageTask> tasks = Stream.concat(slowTasks, fastTasks).collect(Collectors.toList());
+        List<Callable<String>> tasks = Stream.concat(slowTasks, fastTasks).collect(Collectors.toList());
 
         // when
         List<Future<String>> futures = executorService.invokeAll(tasks);
 
         // then
-        assertThat(futures).extracting(future -> {
-            try {
-                return future.get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        }).areExactly(5, new Condition<String>() {
-            @Override
-            public boolean matches(String value) {
-                return value.equals("Message from second remote server");
-            }
-        }).areAtLeast(1, new Condition<String>() {
-            @Override
-            public boolean matches(String value) {
-                return value.equals("Message from first remote server");
-            }
-        }).areAtLeast(1, new Condition<String>() {
-            @Override
-            public boolean matches(String value) {
-                return value.equals("Remote server http://localhost:8081/first is unavailable");
-            }
-        });
+        assertThat(futures)
+            .extracting(future -> {
+                try {
+                    return future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+            })
+            .areExactly(5, new Condition<>("Message from second remote server"::equals, "All requests to second server should succeed"))
+            .areAtLeast(1, new Condition<>("Message from first remote server"::equals, "At least one request to first server should succeed"))
+            .areAtLeast(1, new Condition<>("Remote server http://localhost:8081/first is unavailable"::equals, "At least one request to first server should fail"));
     }
 
-    private class GetMessageTask implements Callable<String> {
-
-        private final String url;
-
-        private GetMessageTask(String url) {
-            this.url = url;
-        }
-
-        @Override
-        public String call() throws Exception {
-            return restTemplate.getForEntity(url, String.class).getBody();
-        }
-
+    private Callable<String> request(String url) {
+        return () -> restTemplate.getForEntity(url, String.class).getBody();
     }
 
 }
