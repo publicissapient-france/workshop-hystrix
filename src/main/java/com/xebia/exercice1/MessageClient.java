@@ -14,16 +14,7 @@ public class MessageClient {
     }
 
     public String getMessage(String userName) {
-
-        return new HystrixCommand<String>(Factory.asKey("Message")) {
-
-            @Override
-            public String run() throws Exception {
-                return messageApi.getMessage(userName);
-            }
-
-        }.execute();
-
+       // TODO create and execute an HystrixCommand which calls getMessage with the userName
     }
 
 }
