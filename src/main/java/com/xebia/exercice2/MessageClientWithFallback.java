@@ -1,8 +1,5 @@
 package com.xebia.exercice2;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
 @SuppressWarnings("WeakerAccess")
@@ -16,25 +13,13 @@ public class MessageClientWithFallback {
 
     public String getMessage(String userName) {
 
-        HystrixCommand.Setter setter = HystrixCommand.Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithFallback"))
-            .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
-                .withExecutionTimeoutInMilliseconds(300)
-            );
+        // TODO declare an Hystrix setter command with an execution timeout of 300 milliseconds
 
-        return new HystrixCommand<String>(setter) {
+        // TODO create and execute an Hystrix command with the setter in parameter and override run method which calls getMessage with the userName
+        // TODO execute the first unit test
 
-            @Override
-            public String run() throws Exception {
-                return messageApi.getMessage(userName);
-            }
-
-            @Override
-            public String getFallback() {
-                return "Unavailable";
-            }
-
-        }.execute();
+        // TODO In the Hystrix command add the getFallback method override which returns a String (See the associated test to get the string content)
+        // TODO execute the second test
 
     }
 
