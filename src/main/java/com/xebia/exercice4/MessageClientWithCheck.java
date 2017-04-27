@@ -1,11 +1,6 @@
 package com.xebia.exercice4;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
-import com.netflix.hystrix.exception.HystrixBadRequestException;
 import com.xebia.MessageApi;
-
-import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 public class MessageClientWithCheck {
@@ -17,26 +12,15 @@ public class MessageClientWithCheck {
     }
 
     public String getMessage(String userId) {
+        // TODO create and execute an Hystrix command with the setter in parameter and override run method which calls getMessage with the userId
+        // TODO execute the first unit test
+        
+        // TODO in the Hystrix command add the getFallback method override which returns a String (See the associated test to get the string content)
+        // TODO execute the second test
 
-        return new HystrixCommand<String>(Factory.asKey("MessageWithCheck")) {
-
-            @Override
-            public String run() throws Exception {
-
-                if (Objects.isNull(userId)) {
-                    throw new HystrixBadRequestException("User ID is null");
-                }
-
-                return messageApi.getMessage(userId);
-            }
-
-            @Override
-            public String getFallback() {
-                return "Unavailable";
-            }
-
-        }.execute();
-
+        // TODO un the run method check userId nullability : in that case throw an HystrixBadRequestException
+        // TODO execute the third unit test
+        
     }
 
 }
