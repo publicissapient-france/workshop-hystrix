@@ -1,7 +1,5 @@
 package com.xebia.exercice1;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
 import com.xebia.MessageApi;
 
 @SuppressWarnings("WeakerAccess")

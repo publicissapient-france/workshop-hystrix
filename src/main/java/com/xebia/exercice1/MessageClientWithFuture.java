@@ -1,10 +1,7 @@
 package com.xebia.exercice1;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
-import com.xebia.MessageApi;
-
 import java.util.concurrent.Future;
+import com.xebia.MessageApi;
 
 @SuppressWarnings("WeakerAccess")
 public class MessageClientWithFuture {
@@ -16,16 +13,7 @@ public class MessageClientWithFuture {
     }
 
     public Future<String> getMessage(String userName) {
-
-        return new HystrixCommand<String>(Factory.asKey("Message")) {
-
-            @Override
-            public String run() throws Exception {
-                return messageApi.getMessage(userName);
-            }
-
-        }.queue();
-
+        // TODO create and queue an HystrixCommand which calls getMessage with the userName
     }
 
 }
