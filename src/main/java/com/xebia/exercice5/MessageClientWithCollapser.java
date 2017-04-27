@@ -1,15 +1,12 @@
 package com.xebia.exercice5;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import com.netflix.hystrix.HystrixCollapser;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
 import com.xebia.MessageApi;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 import static java.util.stream.Collectors.toList;
 
@@ -26,38 +23,21 @@ public class MessageClientWithCollapser {
             this.userName = userName;
         }
 
-        @Override
-        public String getRequestArgument() {
-            return userName;
-        }
+        // TODO override getRequestArgument which returns the userName
+
 
         @Override
         public HystrixCommand<Map<String, String>> createCommand(Collection<CollapsedRequest<String, String>> requests) {
 
-            return new HystrixCommand<Map<String, String>>(Factory.asKey("MessageWithCollapser")) {
-
-                @Override
-                public Map<String, String> run() throws Exception {
-
-                    List<String> userNames = requests.stream().map(CollapsedRequest::getArgument).collect(toList());
-
-                    return messageApi.getMessage(userNames);
-                }
-
-            };
+            // TODO create an HystrixCommand and override the run method which process the requests and extracts userNames
+            // TODO in the run method call and return getMessage with the userNames list
 
         }
 
-        @Override
-        public void mapResponseToRequests(Map<String, String> messages, Collection<CollapsedRequest<String, String>> requests) {
-
-            requests.forEach(request -> {
-                String userName = request.getArgument();
-                String message = messages.get(userName);
-                request.setResponse(message);
-            });
-
-        }
+        // TODO override mapResponseToRequests method which has a Map of messages and a CollapsedRequest Collection in parameter
+        // TODO iterate the CollapsedRequest Collection and get the argument
+        // TODO from the Map get message with the userName
+        // TODO set the response
 
     }
 
@@ -66,22 +46,14 @@ public class MessageClientWithCollapser {
     }
 
     public List<String> getMessage(List<String> userNames) throws Exception {
-
         // two steps execution required
 
-        // first create a list of message futures using collapser queue function
-        List<Future<String>> collapsers = userNames.stream()
-            .map(Collapser::new)
-            .map(Collapser::queue)
-            .collect(toList());
+        // TODO create a list of message futures using collapser queue function
 
-        // then collect future results
-        List<String> messages = new ArrayList<>(userNames.size());
-        for (Future<String> futureMessage : collapsers) {
-            messages.add(futureMessage.get());
-        }
+        // TODO create an ArrayList with the userNames
 
-        return messages;
+        // TODO collect future results and returns the list
+
     }
 
 }
