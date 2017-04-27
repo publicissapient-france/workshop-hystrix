@@ -1,7 +1,5 @@
 package com.xebia.exercice3;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
 import com.xebia.MessageApi;
 
 @SuppressWarnings("WeakerAccess")
@@ -14,21 +12,10 @@ public class MessageClientWithCache {
     }
 
     public String getMessage(String userId) {
+        // TODO create and execute an Hystrix command with the setter in parameter and override run method which calls getMessage with the userId
 
-        return new HystrixCommand<String>(Factory.asKey("MessageWithCache")) {
-
-            @Override
-            public String run() throws Exception {
-                return messageApi.getMessage(userId);
-            }
-
-            @Override
-            public String getCacheKey() {
-                return userId;
-            }
-
-        }.execute();
-
+        // TODO In the Hystrix command add the getCacheKey method override which returns a the userId
+        // TODO execute the test
     }
 
 }
