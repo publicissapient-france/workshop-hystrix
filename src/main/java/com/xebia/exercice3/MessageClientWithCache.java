@@ -16,6 +16,7 @@ public class MessageClientWithCache {
 
         // TODO In the Hystrix command add the getCacheKey method override which returns a the userId
         // TODO execute the test
+        return null;
     }
 
 }

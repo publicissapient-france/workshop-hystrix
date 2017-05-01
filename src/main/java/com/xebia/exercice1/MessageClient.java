@@ -12,7 +12,8 @@ public class MessageClient {
     }
 
     public String getMessage(String userName) {
-       // TODO create and execute an HystrixCommand which calls getMessage with the userName
+        // TODO create and execute an HystrixCommand which calls getMessage with the userName
+        return null;
     }
 
 }

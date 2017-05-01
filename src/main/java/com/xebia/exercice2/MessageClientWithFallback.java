@@ -20,7 +20,7 @@ public class MessageClientWithFallback {
 
         // TODO In the Hystrix command add the getFallback method override which returns a String (See the associated test to get the string content)
         // TODO execute the second test
-
+        return null;
     }
 
 }

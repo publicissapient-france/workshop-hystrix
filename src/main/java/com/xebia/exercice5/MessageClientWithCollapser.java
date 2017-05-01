@@ -1,14 +1,12 @@
 package com.xebia.exercice5;
 
+import com.netflix.hystrix.HystrixCollapser;
+import com.netflix.hystrix.HystrixCommand;
+import com.xebia.MessageApi;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import com.netflix.hystrix.HystrixCollapser;
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
-import com.xebia.MessageApi;
-
-import static java.util.stream.Collectors.toList;
 
 @SuppressWarnings("WeakerAccess")
 public class MessageClientWithCollapser {
@@ -23,21 +21,28 @@ public class MessageClientWithCollapser {
             this.userName = userName;
         }
 
-        // TODO override getRequestArgument which returns the userName
-
+        @Override
+        public String getRequestArgument() {
+            // TODO override getRequestArgument which returns the userName
+            return null;
+        }
 
         @Override
         public HystrixCommand<Map<String, String>> createCommand(Collection<CollapsedRequest<String, String>> requests) {
 
             // TODO create an HystrixCommand and override the run method which process the requests and extracts userNames
             // TODO in the run method call and return getMessage with the userNames list
-
+            return null;
         }
 
-        // TODO override mapResponseToRequests method which has a Map of messages and a CollapsedRequest Collection in parameter
-        // TODO iterate the CollapsedRequest Collection and get the argument
-        // TODO from the Map get message with the userName
-        // TODO set the response
+        @Override
+        protected void mapResponseToRequests(Map<String, String> batchResponse, Collection<CollapsedRequest<String, String>> requests) {
+
+            // TODO override mapResponseToRequests method which has a Map of messages and a CollapsedRequest Collection in parameter
+            // TODO iterate the CollapsedRequest Collection and get the argument
+            // TODO from the Map get message with the userName
+            // TODO set the response
+        }
 
     }
 
@@ -53,7 +58,7 @@ public class MessageClientWithCollapser {
         // TODO create an ArrayList with the userNames
 
         // TODO collect future results and returns the list
-
+        return null;
     }
 
 }
