@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * The goal here is to use HystrixCommand features in a real application.
+ * Application expose 2 services which call 2 different remote services.
+ * Hystrix allows here to isolate server resources (Tomcat Worker Threads) used by each service.
+ */
 @SpringBootApplication
 public class MyAppServer {
 

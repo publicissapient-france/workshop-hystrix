@@ -7,7 +7,10 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to use Hystrix circuit breaker capabilities.
+ * Circuit breaker allows to stop calling a dependency for some time after multiple fails.
+ */
 public class MessageClientWithCircuitBreaker {
 
     private final MessageApi messageApi;

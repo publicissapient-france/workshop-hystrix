@@ -2,6 +2,9 @@ package com.xebia.exercice4;
 
 import com.xebia.MessageApi;
 
+/**
+ * The goal here is to illustrate how HystrixCommand can raise exception to caller and not return fallback.
+ */
 @SuppressWarnings("WeakerAccess")
 public class MessageClientWithCheck {
 
@@ -18,7 +21,7 @@ public class MessageClientWithCheck {
         // TODO in the Hystrix command add the getFallback method override which returns a String (See the associated test to get the string content)
         // TODO execute the second test
 
-        // TODO un the run method check userId nullability : in that case throw an HystrixBadRequestException
+        // TODO in the run method check userId nullability : in that case throw an HystrixBadRequestException
         // TODO execute the third unit test
         return null;
     }

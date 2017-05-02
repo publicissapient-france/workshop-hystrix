@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * The goal here is to use Hystrix configuration hot reload and dashboard features.
+ * Dashboard is available at http://localhost:8080/hystrix (stream URL is http://localhost:8080/hystrix.stream).
+ * Configuration can be updated either via JMX (jconsole) or via src/main/resources config.properties file.
+ */
 @EnableHystrix
 @EnableHystrixDashboard
 @SpringBootApplication(scanBasePackageClasses = DashboardApplication.class)

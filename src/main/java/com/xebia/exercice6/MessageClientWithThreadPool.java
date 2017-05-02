@@ -3,6 +3,11 @@ package com.xebia.exercice6;
 import com.netflix.hystrix.*;
 import com.xebia.MessageApi;
 
+/**
+ * The goal here is to use Hystrix thread isolation feature.
+ * Thread isolation limits concurrent calls to MessageApi.
+ * Commands are executed on a dedicated dead pool but rejected if thread pool has no more capacity.
+ */
 public class MessageClientWithThreadPool {
 
     private final MessageApi messageApi;
@@ -20,8 +25,7 @@ public class MessageClientWithThreadPool {
             .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(2))
             .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                 .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD)
-                .withExecutionTimeoutEnabled(false)
-            );
+                .withExecutionTimeoutEnabled(false));
 
         return new HystrixCommand<String>(setter) {
 

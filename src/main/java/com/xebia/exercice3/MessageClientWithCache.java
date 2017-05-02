@@ -2,7 +2,9 @@ package com.xebia.exercice3;
 
 import com.xebia.MessageApi;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to use HystrixCommand cache capabilities.
+ */
 public class MessageClientWithCache {
 
     private final MessageApi messageApi;

@@ -6,6 +6,11 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
+/**
+ * The goal here is to use Hystrix semaphore isolation feature.
+ * Semaphore isolation allows to limit concurrent calls to MessageApi.
+ * Commands are executed on current Thread but rejected if semaphore has no more capacity.
+ */
 public class MessageClientWithSemaphore {
 
     private final MessageApi messageApi;

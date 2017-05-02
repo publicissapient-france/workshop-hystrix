@@ -8,7 +8,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to use HystrixCollapser feature.
+ * Collapser allows to gather multiple calls to MessageApi into a unique one.
+ */
 public class MessageClientWithCollapser {
 
     private final MessageApi messageApi;

@@ -2,7 +2,10 @@ package com.xebia.exercice2;
 
 import com.xebia.MessageApi;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to define a fallback in HystrixCommand.
+ * Fallback is used whenever command fails (timeout, open circuit, exception raised).
+ */
 public class MessageClientWithFallback {
 
     private final MessageApi messageApi;
