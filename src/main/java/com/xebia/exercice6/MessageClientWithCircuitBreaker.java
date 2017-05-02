@@ -15,18 +15,32 @@ public class MessageClientWithCircuitBreaker {
 
     private final MessageApi messageApi;
 
+    private final Setter setter;
+
     public MessageClientWithCircuitBreaker(MessageApi messageApi) {
         this.messageApi = messageApi;
+
+        /*
+         TODO:
+         Create a Setter instance for an HystrixCommand and configure it to:
+         - open circuit when 50% calls fail in a window of 1 second (with at least 5 requests in this window)
+         - close circuit 2 seconds after being opened
+         */
+
+        this.setter = Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithCircuitBreaker"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
+            .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
+                .withCircuitBreakerSleepWindowInMilliseconds(2_000) // circuit wil close 2 seconds after being opened
+                .withCircuitBreakerRequestVolumeThreshold(5) // 5 request are required to starting counting errors
+                .withCircuitBreakerErrorThresholdPercentage(50) // 50% error rate
+                .withMetricsRollingStatisticalWindowInMilliseconds(1000) // in a window of 1 second
+            );
     }
 
     public String getMessage(String userId) {
 
-        Setter setter = Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithCircuitBreaker"))
-            .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
-            .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
-                .withCircuitBreakerRequestVolumeThreshold(5)
-                .withCircuitBreakerSleepWindowInMilliseconds(1_000));
+        // TODO create and execute an Hystrix Command with this setter in parameter
 
         return new HystrixCommand<String>(setter) {
 
