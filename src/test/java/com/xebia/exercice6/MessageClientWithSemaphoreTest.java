@@ -23,7 +23,7 @@ public class MessageClientWithSemaphoreTest {
     @Test
     public void should_use_semaphore_isolation_to_accept_3_simultaneous_calls() throws InterruptedException {
         // given
-        MessageApi messageApi = new SlowMessageApi();
+        MessageApi messageApi = new SlowMessageApi(400);
         MessageClientWithSemaphore messageClient = new MessageClientWithSemaphore(messageApi);
         List<Callable<String>> callables = IntStream
             .range(0, 4)
@@ -31,12 +31,12 @@ public class MessageClientWithSemaphoreTest {
             .collect(Collectors.toList());
 
         // when invoking all request at same time
-        List<String> futureResults = executorService.invokeAll(callables).stream()
+        List<String> results = executorService.invokeAll(callables).stream()
             .map(Exceptions.toRuntime(Future::get))
             .collect(Collectors.toList());
 
         // then
-        assertThat(futureResults)
+        assertThat(results)
             .areExactly(2, new Condition<>("Hello Bob"::equals, "First 2 calls should succeed when semaphore has capacity"))
             .areExactly(2, new Condition<>("Bob messages not available"::equals, "Last 2 calls should fail when semaphore is full"));
     }

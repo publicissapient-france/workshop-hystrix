@@ -15,22 +15,33 @@ public class MessageClientWithSemaphore {
 
     private final MessageApi messageApi;
 
+    private final HystrixCommand.Setter setter;
+
+
     public MessageClientWithSemaphore(MessageApi messageApi) {
         this.messageApi = messageApi;
-    }
 
-    public String getMessage(String userId) {
+        /*
+         TODO:
+         Create a Setter instance for an HystrixCommand and configure it to:
+         - execute commands using a semaphore strategy
+         - allow 2 max concurrent command executions
+         */
 
-        HystrixCommand.Setter commandSetter = HystrixCommand.Setter
+        this.setter = HystrixCommand.Setter
             .withGroupKey(HystrixCommandGroupKey.Factory.asKey("GroupKey"))
             .andCommandKey(HystrixCommandKey.Factory.asKey("CommandKey"))
             .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                 .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)
                 .withExecutionIsolationSemaphoreMaxConcurrentRequests(2)
-                .withExecutionTimeoutEnabled(false)
             );
+    }
 
-        return new HystrixCommand<String>(commandSetter) {
+    public String getMessage(String userId) {
+
+        // TODO create and execute an Hystrix Command with this setter in parameter
+
+        return new HystrixCommand<String>(setter) {
 
             @Override
             protected String run() throws Exception {
