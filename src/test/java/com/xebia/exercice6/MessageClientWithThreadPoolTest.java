@@ -23,7 +23,7 @@ public class MessageClientWithThreadPoolTest {
     @Test
     public void should_use_thread_pool_isolation_to_accept_3_simultaneous_calls() throws InterruptedException {
         // given
-        MessageApi messageApi = new SlowMessageApi();
+        MessageApi messageApi = new SlowMessageApi(400);
         MessageClientWithThreadPool messageClient = new MessageClientWithThreadPool(messageApi);
         List<Callable<String>> callables = IntStream
             .range(0, 4)

@@ -12,20 +12,31 @@ public class MessageClientWithThreadPool {
 
     private final MessageApi messageApi;
 
+    private final HystrixCommand.Setter setter;
+
     public MessageClientWithThreadPool(MessageApi messageApi) {
         this.messageApi = messageApi;
-    }
 
-    public String getMessage(String userId) {
+        /*
+         TODO:
+         Create a Setter instance for an HystrixCommand and configure it to:
+         - execute commands using a thread strategy
+         - enable 2 concurrent command executions (ThreadPool properties)
+         */
 
-        HystrixCommand.Setter setter = HystrixCommand.Setter
+        this.setter = HystrixCommand.Setter
             .withGroupKey(HystrixCommandGroupKey.Factory.asKey("GroupKey"))
             .andCommandKey(HystrixCommandKey.Factory.asKey("CommandKey"))
             .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("PoolThread"))
             .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(2))
             .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                 .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD)
-                .withExecutionTimeoutEnabled(false));
+            );
+    }
+
+    public String getMessage(String userId) {
+
+        // TODO create and execute an Hystrix Command with this setter in parameter
 
         return new HystrixCommand<String>(setter) {
 
@@ -36,7 +47,6 @@ public class MessageClientWithThreadPool {
 
             @Override
             public String getFallback() {
-                getExecutionException().printStackTrace();
                 return userId + " messages not available";
             }
 
