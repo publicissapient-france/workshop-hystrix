@@ -7,23 +7,31 @@ import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to use Hystrix circuit breaker capabilities.
+ * Circuit breaker allows to stop calling a dependency for some time after multiple fails.
+ */
 public class MessageClientWithCircuitBreaker {
 
     private final MessageApi messageApi;
 
+    private final Setter setter;
+
     public MessageClientWithCircuitBreaker(MessageApi messageApi) {
         this.messageApi = messageApi;
-    }
 
-    public String getMessage(String userId) {
-
-        Setter setter = Setter
+        this.setter = Setter
             .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithCircuitBreaker"))
             .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
             .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
-                .withCircuitBreakerRequestVolumeThreshold(5)
-                .withCircuitBreakerSleepWindowInMilliseconds(1_000));
+                .withCircuitBreakerSleepWindowInMilliseconds(2_000) // circuit wil close 2 seconds after being opened
+                .withCircuitBreakerRequestVolumeThreshold(5) // 5 request are required to starting counting errors
+                .withCircuitBreakerErrorThresholdPercentage(50) // 50% error rate
+                .withMetricsRollingStatisticalWindowInMilliseconds(1000) // in a window of 1 second
+            );
+    }
+
+    public String getMessage(String userId) {
 
         return new HystrixCommand<String>(setter) {
 
