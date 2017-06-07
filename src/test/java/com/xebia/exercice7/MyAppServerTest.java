@@ -1,5 +1,18 @@
+
+
+
 package com.xebia.exercice7;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Rule;
@@ -9,20 +22,13 @@ import org.junit.rules.TestRule;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class MyAppServerTest {
 
     @Rule
     public final TestRule testRuleChain = RuleChain
-        .outerRule(new SpringBootRule(MyAppServer.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
-        .around(new SpringBootRule(SecondRemoteServer.class, "--server.port=8081"))
-        .around(new SpringBootRule(FirstRemoteServer.class, "--server.port=8082"));
+        .outerRule(new SpringBootRule(MyAppServer.class, "--server.port=8080", "--spring.jmx.enabled=false", "--server.tomcat.max-threads=9"))
+        .around(new SpringBootRule(SecondRemoteServer.class, "--server.port=8081", "--spring.jmx.enabled=false"))
+        .around(new SpringBootRule(FirstRemoteServer.class, "--server.port=8082", "--spring.jmx.enabled=false"));
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(20);
 
