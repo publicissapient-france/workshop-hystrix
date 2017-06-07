@@ -1,10 +1,6 @@
 package com.xebia.exercice6;
 
-import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommand.Setter;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
 /**
@@ -17,7 +13,7 @@ public class MessageClientWithCircuitBreaker {
 
     private final Setter setter;
 
-    public MessageClientWithCircuitBreaker(MessageApi messageApi) {
+    MessageClientWithCircuitBreaker(MessageApi messageApi) {
         this.messageApi = messageApi;
 
         /*
@@ -27,34 +23,14 @@ public class MessageClientWithCircuitBreaker {
          - close circuit 2 seconds after being opened
          */
 
-        this.setter = Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithCircuitBreaker"))
-            .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
-            .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
-                .withCircuitBreakerSleepWindowInMilliseconds(2_000) // circuit wil close 2 seconds after being opened
-                .withCircuitBreakerRequestVolumeThreshold(5) // 5 request are required to starting counting errors
-                .withCircuitBreakerErrorThresholdPercentage(50) // 50% error rate
-                .withMetricsRollingStatisticalWindowInMilliseconds(1000) // in a window of 1 second
-            );
+        this.setter = null;
     }
 
     public String getMessage(String userId) {
 
         // TODO create and execute an Hystrix Command with this setter in parameter
 
-        return new HystrixCommand<String>(setter) {
-
-            @Override
-            public String run() throws Exception {
-                return messageApi.getMessage(userId);
-            }
-
-            @Override
-            public String getFallback() {
-                return "Unavailable";
-            }
-
-        }.execute();
+        return null;
 
     }
 

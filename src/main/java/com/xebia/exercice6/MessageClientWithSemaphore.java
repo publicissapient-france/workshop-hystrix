@@ -1,9 +1,6 @@
 package com.xebia.exercice6;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
 /**
@@ -18,7 +15,7 @@ public class MessageClientWithSemaphore {
     private final HystrixCommand.Setter setter;
 
 
-    public MessageClientWithSemaphore(MessageApi messageApi) {
+    MessageClientWithSemaphore(MessageApi messageApi) {
         this.messageApi = messageApi;
 
         /*
@@ -28,33 +25,14 @@ public class MessageClientWithSemaphore {
          - allow 2 max concurrent command executions
          */
 
-        this.setter = HystrixCommand.Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("GroupKey"))
-            .andCommandKey(HystrixCommandKey.Factory.asKey("CommandKey"))
-            .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
-                .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)
-                .withExecutionIsolationSemaphoreMaxConcurrentRequests(2)
-            );
+        this.setter = null;
     }
 
     public String getMessage(String userId) {
 
         // TODO create and execute an Hystrix Command with this setter in parameter
 
-        return new HystrixCommand<String>(setter) {
-
-            @Override
-            protected String run() throws Exception {
-                return messageApi.getMessage(userId);
-            }
-
-            @Override
-            protected String getFallback() {
-                return userId + " messages not available";
-            }
-
-        }.execute();
-
+        return null;
     }
 
 }
