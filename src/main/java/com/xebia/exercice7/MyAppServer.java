@@ -64,6 +64,8 @@ public class MyAppServer {
             this.restTemplate = restTemplate;
             this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
+                // TODO execute the test. It will fail because there's a timout error.
+
                 // TODO: Set the max of threads number that can be used to handler calls to the remote services
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(5_000));
             this.url = url;
