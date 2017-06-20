@@ -55,11 +55,12 @@ public class MessageApplicationTest {
         List<Callable<String>> tasks = Stream.concat(slowTasks, fastTasks).collect(Collectors.toList());
 
         // when
-        List<Future<String>> futures = executorService.invokeAll(tasks);
+        List<String> results = executorService.invokeAll(tasks).stream()
+            .map(Exceptions.toRuntime(Future::get))
+            .collect(Collectors.toList());
 
         // then
-        assertThat(futures)
-            .extracting(Exceptions.toRuntime(Future::get))
+        assertThat(results)
             .areExactly(5, new Condition<>("Message from second remote server"::equals, "All requests to second server should succeed"))
             .areAtLeast(1, new Condition<>("Message from first remote server"::equals, "At least one request to first server should succeed"))
             .areAtLeast(1, new Condition<>("Remote server http://localhost:8081/first is unavailable"::equals, "At least one request to first server should fail"));
