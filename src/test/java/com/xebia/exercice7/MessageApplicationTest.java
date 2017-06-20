@@ -20,11 +20,11 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MyAppServerTest {
+public class MessageApplicationTest {
 
     @Rule
     public final TestRule testRuleChain = RuleChain
-        .outerRule(new SpringBootRule(MyAppServer.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
+        .outerRule(new SpringBootRule(MessageApplication.class, "--server.port=8080", "--server.tomcat.max-threads=9"))
         .around(new SpringBootRule(SecondRemoteServer.class, "--server.port=8081"))
         .around(new SpringBootRule(FirstRemoteServer.class, "--server.port=8082"));
 
@@ -32,7 +32,7 @@ public class MyAppServerTest {
 
     private final RestTemplate restTemplate;
 
-    public MyAppServerTest() {
+    public MessageApplicationTest() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
         factory.setReadTimeout(5_000);
         factory.setConnectTimeout(2_000);
