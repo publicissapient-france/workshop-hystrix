@@ -21,7 +21,7 @@ public class MessageClientWithSemaphoreTest {
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     @Test
-    public void should_use_semaphore_isolation_to_accept_3_simultaneous_calls() throws InterruptedException {
+    public void should_use_semaphore_isolation_to_accept_2_simultaneous_calls() throws InterruptedException {
         // given
         MessageApi messageApi = new SlowMessageApi(400);
         MessageClientWithSemaphore messageClient = new MessageClientWithSemaphore(messageApi);
