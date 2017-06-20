@@ -25,12 +25,11 @@ public class MessageClientWithSemaphoreTest {
         // given
         MessageApi messageApi = new SlowMessageApi(400);
         MessageClientWithSemaphore messageClient = new MessageClientWithSemaphore(messageApi);
-        List<Callable<String>> callables = IntStream
-            .range(0, 4)
+        List<Callable<String>> callables = IntStream.range(0, 4)
             .mapToObj(n -> (Callable<String>) () -> messageClient.getMessage("Bob"))
             .collect(Collectors.toList());
 
-        // when invoking all request at same time
+        // when invoking all requests at same time
         List<String> results = executorService.invokeAll(callables).stream()
             .map(Exceptions.toRuntime(Future::get))
             .collect(Collectors.toList());
@@ -38,7 +37,7 @@ public class MessageClientWithSemaphoreTest {
         // then
         assertThat(results)
             .areExactly(2, new Condition<>("Hello Bob"::equals, "First 2 calls should succeed when semaphore has capacity"))
-            .areExactly(2, new Condition<>("Bob messages not available"::equals, "Last 2 calls should fail when semaphore is full"));
+            .areExactly(2, new Condition<>("Unavailable"::equals, "Last 2 calls should fail when semaphore is full"));
     }
 
 }

@@ -41,7 +41,7 @@ public class MessageClientWithSemaphore {
 
             @Override
             protected String getFallback() {
-                return userId + " messages not available";
+                return "Unavailable";
             }
 
         }.execute();
