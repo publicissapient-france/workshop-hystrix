@@ -18,18 +18,18 @@ import org.springframework.web.client.RestTemplate;
  * Application expose 2 services which call 2 different remote services.
  * Hystrix allows here to isolate server resources (Tomcat Worker Threads) used by each service.
  */
-@SpringBootApplication
-public class MyAppServer {
+@SpringBootApplication(scanBasePackageClasses = MessageApplication.class)
+public class MessageApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyAppServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageApplication.class);
 
     @RestController
     @RequestMapping("/messages")
     public class MessageController {
 
-        private final RemoteServerClient firstClient;
+        private final MessageClient firstClient;
 
-        private final RemoteServerClient secondClient;
+        private final MessageClient secondClient;
 
         public MessageController() {
 
@@ -39,8 +39,8 @@ public class MyAppServer {
 
             RestTemplate restTemplate = new RestTemplate(factory);
 
-            this.firstClient = new RemoteServerClient("http://localhost:8081/first", restTemplate);
-            this.secondClient = new RemoteServerClient("http://localhost:8082/second", restTemplate);
+            this.firstClient = new MessageClient("http://localhost:8081/first", restTemplate);
+            this.secondClient = new MessageClient("http://localhost:8082/second", restTemplate);
         }
 
         @GetMapping("/first")
@@ -55,7 +55,7 @@ public class MyAppServer {
 
     }
 
-    private class RemoteServerClient {
+    private class MessageClient {
 
         private final String url;
 
@@ -63,7 +63,7 @@ public class MyAppServer {
 
         private final HystrixCommand.Setter setter;
 
-        public RemoteServerClient(String url, RestTemplate restTemplate) {
+        MessageClient(String url, RestTemplate restTemplate) {
             this.restTemplate = restTemplate;
             this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
