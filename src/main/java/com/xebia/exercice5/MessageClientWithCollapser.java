@@ -5,15 +5,16 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
 import com.xebia.MessageApi;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
 import static java.util.stream.Collectors.toList;
-
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to use HystrixCollapser feature.
+ * Collapser allows to gather multiple calls to MessageApi into a unique one.
+ */
 public class MessageClientWithCollapser {
 
     private final MessageApi messageApi;
@@ -61,27 +62,16 @@ public class MessageClientWithCollapser {
 
     }
 
-    public MessageClientWithCollapser(MessageApi messageApi) {
+    MessageClientWithCollapser(MessageApi messageApi) {
         this.messageApi = messageApi;
     }
 
-    public List<String> getMessage(List<String> userNames) throws Exception {
+    public List<Future<String>> getMessage(List<String> userNames) throws Exception {
 
-        // two steps execution required
-
-        // first create a list of message futures using collapser queue function
-        List<Future<String>> collapsers = userNames.stream()
+        return userNames.stream()
             .map(Collapser::new)
             .map(Collapser::queue)
             .collect(toList());
-
-        // then collect future results
-        List<String> messages = new ArrayList<>(userNames.size());
-        for (Future<String> futureMessage : collapsers) {
-            messages.add(futureMessage.get());
-        }
-
-        return messages;
     }
 
 }
