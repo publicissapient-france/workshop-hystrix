@@ -1,18 +1,6 @@
-
-
-
 package com.xebia.exercice7;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.xebia.Exceptions;
 import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.Rule;
@@ -21,6 +9,16 @@ import org.junit.rules.RuleChain;
 import org.junit.rules.TestRule;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MyAppServerTest {
 
@@ -61,13 +59,7 @@ public class MyAppServerTest {
 
         // then
         assertThat(futures)
-            .extracting(future -> {
-                try {
-                    return future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    throw new RuntimeException(e);
-                }
-            })
+            .extracting(Exceptions.toRuntime(Future::get))
             .areExactly(5, new Condition<>("Message from second remote server"::equals, "All requests to second server should succeed"))
             .areAtLeast(1, new Condition<>("Message from first remote server"::equals, "At least one request to first server should succeed"))
             .areAtLeast(1, new Condition<>("Remote server http://localhost:8081/first is unavailable"::equals, "At least one request to first server should fail"));
