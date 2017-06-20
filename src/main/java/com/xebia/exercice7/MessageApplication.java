@@ -67,6 +67,7 @@ public class MessageApplication {
             this.restTemplate = restTemplate;
             this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
+                // TODO execute the test. It will fail because there's a timeout error.
                 // TODO: Set the maximum number of threads available to handle calls to remote services
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(5_000));
             this.url = url;
