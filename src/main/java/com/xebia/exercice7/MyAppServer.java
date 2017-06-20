@@ -1,6 +1,9 @@
 package com.xebia.exercice7;
 
-import com.netflix.hystrix.*;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * The goal here is to use HystrixCommand features in a real application.
+ * Application expose 2 services which call 2 different remote services.
+ * Hystrix allows here to isolate server resources (Tomcat Worker Threads) used by each service.
+ */
 @SpringBootApplication
 public class MyAppServer {
 
