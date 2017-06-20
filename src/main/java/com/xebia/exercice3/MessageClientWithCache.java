@@ -4,7 +4,9 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
 import com.xebia.MessageApi;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to use HystrixCommand cache capabilities.
+ */
 public class MessageClientWithCache {
 
     private final MessageApi messageApi;
@@ -13,18 +15,18 @@ public class MessageClientWithCache {
         this.messageApi = messageApi;
     }
 
-    public String getMessage(String userId) {
+    public String getMessage(String userName) {
 
         return new HystrixCommand<String>(Factory.asKey("MessageWithCache")) {
 
             @Override
             public String run() throws Exception {
-                return messageApi.getMessage(userId);
+                return messageApi.getMessage(userName);
             }
 
             @Override
             public String getCacheKey() {
-                return userId;
+                return userName;
             }
 
         }.execute();

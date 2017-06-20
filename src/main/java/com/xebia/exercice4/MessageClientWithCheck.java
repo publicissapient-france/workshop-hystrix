@@ -7,7 +7,9 @@ import com.xebia.MessageApi;
 
 import java.util.Objects;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to illustrate how HystrixCommand can raise exception to caller and not return fallback.
+ */
 public class MessageClientWithCheck {
 
     private final MessageApi messageApi;
@@ -16,18 +18,18 @@ public class MessageClientWithCheck {
         this.messageApi = messageApi;
     }
 
-    public String getMessage(String userId) {
+    public String getMessage(String userName) {
 
         return new HystrixCommand<String>(Factory.asKey("MessageWithCheck")) {
 
             @Override
             public String run() throws Exception {
 
-                if (Objects.isNull(userId)) {
+                if (Objects.isNull(userName)) {
                     throw new HystrixBadRequestException("User ID is null");
                 }
 
-                return messageApi.getMessage(userId);
+                return messageApi.getMessage(userName);
             }
 
             @Override

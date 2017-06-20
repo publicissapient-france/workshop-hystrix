@@ -5,7 +5,10 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
-@SuppressWarnings("WeakerAccess")
+/**
+ * The goal here is to define a fallback in HystrixCommand.
+ * Fallback is used whenever command fails (timeout, open circuit, exception raised).
+ */
 public class MessageClientWithFallback {
 
     private final MessageApi messageApi;
