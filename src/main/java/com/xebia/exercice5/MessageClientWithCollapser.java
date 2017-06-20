@@ -7,6 +7,7 @@ import com.xebia.MessageApi;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 /**
  * The goal here is to use HystrixCollapser feature.
@@ -26,7 +27,7 @@ public class MessageClientWithCollapser {
 
         @Override
         public String getRequestArgument() {
-            // TODO override getRequestArgument which returns the userName
+            // TODO override getRequestArgument which returns the userName for this collapser
             return null;
         }
 
@@ -34,7 +35,7 @@ public class MessageClientWithCollapser {
         public HystrixCommand<Map<String, String>> createCommand(Collection<CollapsedRequest<String, String>> requests) {
 
             // TODO create an HystrixCommand and override the run method which process the requests and extracts userNames
-            // TODO in the run method call and return getMessage with the userNames list
+            // TODO in the run method call and return getMessage from messageApi with the userNames list
             return null;
         }
 
@@ -49,18 +50,14 @@ public class MessageClientWithCollapser {
 
     }
 
-    public MessageClientWithCollapser(MessageApi messageApi) {
+    MessageClientWithCollapser(MessageApi messageApi) {
         this.messageApi = messageApi;
     }
 
-    public List<String> getMessage(List<String> userNames) throws Exception {
-        // two steps execution required
+    public List<Future<String>> getMessage(List<String> userNames) throws Exception {
 
-        // TODO create a list of message futures using collapser queue function
-
-        // TODO create an ArrayList with the userNames
-
-        // TODO collect future results and returns the list
+        // TODO create a collapser for each userName
+        // TODO create and return a list of message futures using collapser queue function
         return null;
     }
 

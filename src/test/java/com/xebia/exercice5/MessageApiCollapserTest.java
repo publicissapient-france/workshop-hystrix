@@ -3,6 +3,7 @@ package com.xebia.exercice5;
 import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.HystrixRequestLog;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import com.xebia.Exceptions;
 import com.xebia.MessageApi;
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +12,8 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import static com.netflix.hystrix.HystrixEventType.COLLAPSED;
 import static com.netflix.hystrix.HystrixEventType.SUCCESS;
@@ -46,7 +49,9 @@ public class MessageApiCollapserTest {
         MessageClientWithCollapser messageClientWithCollapser = new MessageClientWithCollapser(messageApi);
 
         // when
-        List<String> results = messageClientWithCollapser.getMessage(userIds);
+        List<String> results = messageClientWithCollapser.getMessage(userIds).stream()
+            .map(Exceptions.toRuntime(Future::get))
+            .collect(Collectors.toList());
 
         // then
         assertThat(results).isEqualTo(expected);
