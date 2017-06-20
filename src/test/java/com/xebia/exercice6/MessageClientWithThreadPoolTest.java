@@ -38,7 +38,7 @@ public class MessageClientWithThreadPoolTest {
         // then
         assertThat(results)
             .areExactly(2, new Condition<>("Hello Bob"::equals, "First 2 calls should succeed when thread pool is empty"))
-            .areExactly(2, new Condition<>("Bob messages not available"::equals, "Last 2 calls should be rejected when thread pool is full"));
+            .areExactly(2, new Condition<>("Unavailable"::equals, "Last 2 calls should be rejected when thread pool is full"));
     }
 
 }

@@ -38,7 +38,7 @@ public class MessageClientWithThreadPool {
 
             @Override
             public String getFallback() {
-                return userId + " messages not available";
+                return "Unavailable";
             }
 
         }.execute();
