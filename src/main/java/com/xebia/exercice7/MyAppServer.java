@@ -1,6 +1,9 @@
 package com.xebia.exercice7;
 
-import com.netflix.hystrix.*;
+import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixCommandProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -64,7 +67,7 @@ public class MyAppServer {
             this.restTemplate = restTemplate;
             this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
-                // TODO: Set the max of threads number that can be used to handler calls to the remote services
+                // TODO: Set the maximum number of threads available to handle calls to remote services
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(5_000));
             this.url = url;
         }
