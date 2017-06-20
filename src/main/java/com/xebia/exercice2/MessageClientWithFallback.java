@@ -21,7 +21,7 @@ public class MessageClientWithFallback {
         // TODO create and execute an Hystrix command with the setter in parameter and override run method which calls getMessage with the userName
         // TODO execute the first unit test
 
-        // TODO In the Hystrix command add the getFallback method override which returns a String (See the associated test to get the string content)
+        // TODO In the Hystrix command override getFallback method and return a Fallback String message (See the associated test to get the string content)
         // TODO execute the second test
         return null;
     }

@@ -13,10 +13,10 @@ public class MessageClientWithCache {
         this.messageApi = messageApi;
     }
 
-    public String getMessage(String userId) {
-        // TODO create and execute an Hystrix command with the setter in parameter and override run method which calls getMessage with the userId
+    public String getMessage(String userName) {
+        // TODO create and execute an Hystrix command and override run method which calls getMessage with the userName
 
-        // TODO In the Hystrix command add the getCacheKey method override which returns a the userId
+        // TODO In the Hystrix command override the getCacheKey method with userName as the cache key
         // TODO execute the test
         return null;
     }

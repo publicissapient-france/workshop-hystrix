@@ -15,7 +15,7 @@ public class MessageClientWithObservable {
         this.messageApi = messageApi;
     }
 
-    public Observable<String> getMessage(String userId) {
+    public Observable<String> getMessage(String userName) {
 
         // TODO create and observe an HystrixCommand which calls getMessage with the userName
 
