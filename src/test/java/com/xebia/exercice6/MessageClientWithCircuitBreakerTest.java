@@ -28,7 +28,7 @@ public class MessageClientWithCircuitBreakerTest {
         // given
         MessageClientWithCircuitBreaker messageClientWithCircuitBreaker = new MessageClientWithCircuitBreaker(messageApi);
 
-        // when 10 failures in less than 1 second
+        // when 5 failures out of 10 in less than 1 second (50%)
         assertThat(IntStream.range(0, 10)
             .mapToObj(n -> messageClientWithCircuitBreaker.getMessage("Bob"))
             .collect(Collectors.toList()))
@@ -47,7 +47,7 @@ public class MessageClientWithCircuitBreakerTest {
 
         // when circuit is closed after a sleep of more than 2s
         assertThat(messageClientWithCircuitBreaker.getMessage("Eve"))
-            .withFailMessage("Circuit should be closed 1s after being opened")
+            .withFailMessage("Circuit should be closed 2s after being opened")
             .isEqualTo("Hello Eve");
     }
 
