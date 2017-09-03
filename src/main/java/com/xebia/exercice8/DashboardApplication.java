@@ -37,11 +37,11 @@ public class DashboardApplication {
 
         private final MessageApi messageApi;
 
-        private final HystrixCommand.Setter commandSetter;
+        private final HystrixCommand.Setter setter;
 
         public DashboardApi(MessageApi messageApi) {
             this.messageApi = messageApi;
-            this.commandSetter = HystrixCommand.Setter
+            this.setter = HystrixCommand.Setter
                 .withGroupKey(HystrixCommandGroupKey.Factory.asKey("DashboardGroup"))
                 .andCommandKey(HystrixCommandKey.Factory.asKey("DashboardCommand"));
         }
@@ -49,7 +49,7 @@ public class DashboardApplication {
         @GetMapping
         public String hello() throws Exception {
 
-            HystrixCommand<String> command = new HystrixCommand<String>(commandSetter) {
+            HystrixCommand<String> command = new HystrixCommand<String>(setter) {
 
                 @Override
                 protected String run() throws Exception {

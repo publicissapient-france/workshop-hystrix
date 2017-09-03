@@ -17,12 +17,11 @@ public class MessageClientWithCircuitBreaker {
 
     private final Setter setter;
 
-    public MessageClientWithCircuitBreaker(MessageApi messageApi) {
+    MessageClientWithCircuitBreaker(MessageApi messageApi) {
         this.messageApi = messageApi;
-
         this.setter = Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithCircuitBreaker"))
-            .andCommandKey(HystrixCommandKey.Factory.asKey("CircuitBreaker"))
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise6"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("MessageClientWithCircuitBreaker"))
             .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
                 .withCircuitBreakerSleepWindowInMilliseconds(2_000) // circuit wil close 2 seconds after being opened
                 .withCircuitBreakerRequestVolumeThreshold(5) // 5 request are required to start counting errors

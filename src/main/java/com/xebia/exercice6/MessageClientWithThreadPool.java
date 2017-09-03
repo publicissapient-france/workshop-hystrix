@@ -14,12 +14,11 @@ public class MessageClientWithThreadPool {
 
     private final HystrixCommand.Setter setter;
 
-    public MessageClientWithThreadPool(MessageApi messageApi) {
+    MessageClientWithThreadPool(MessageApi messageApi) {
         this.messageApi = messageApi;
-
         this.setter = HystrixCommand.Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("GroupKey"))
-            .andCommandKey(HystrixCommandKey.Factory.asKey("CommandKey"))
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise6"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("MessageClientWithThreadPool"))
             .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("PoolThread"))
             .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(2))
             .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()

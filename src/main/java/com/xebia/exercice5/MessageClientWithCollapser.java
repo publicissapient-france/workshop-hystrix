@@ -2,7 +2,8 @@ package com.xebia.exercice5;
 
 import com.netflix.hystrix.HystrixCollapser;
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import com.xebia.MessageApi;
 
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import static java.util.stream.Collectors.toList;
+
 /**
  * The goal here is to use HystrixCollapser feature.
  * Collapser allows to gather multiple calls to MessageApi into a unique one.
@@ -19,11 +21,20 @@ public class MessageClientWithCollapser {
 
     private final MessageApi messageApi;
 
+    private final HystrixCommand.Setter setter;
+
+    MessageClientWithCollapser(MessageApi messageApi) {
+        this.messageApi = messageApi;
+        this.setter = HystrixCommand.Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise5"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("MessageClientWithCollapser"));
+    }
+
     private final class Collapser extends HystrixCollapser<Map<String, String>, String, String> {
 
         private final String userName;
 
-        public Collapser(String userName) {
+        Collapser(String userName) {
             this.userName = userName;
         }
 
@@ -35,7 +46,7 @@ public class MessageClientWithCollapser {
         @Override
         public HystrixCommand<Map<String, String>> createCommand(Collection<CollapsedRequest<String, String>> requests) {
 
-            return new HystrixCommand<Map<String, String>>(Factory.asKey("MessageWithCollapser")) {
+            return new HystrixCommand<Map<String, String>>(setter) {
 
                 @Override
                 public Map<String, String> run() throws Exception {
@@ -60,10 +71,6 @@ public class MessageClientWithCollapser {
 
         }
 
-    }
-
-    MessageClientWithCollapser(MessageApi messageApi) {
-        this.messageApi = messageApi;
     }
 
     public List<Future<String>> getMessage(List<String> userNames) throws Exception {

@@ -62,8 +62,10 @@ public class MessageApplication {
 
         MessageClient(String url, RestTemplate restTemplate) {
             this.restTemplate = restTemplate;
-            this.setter = HystrixCommand.Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(url))
-                .andCommandKey(HystrixCommandKey.Factory.asKey("/messages"))
+            this.setter = HystrixCommand.Setter
+                .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageApplication"))
+                .andCommandKey(HystrixCommandKey.Factory.asKey("CommandFor: " + url))
+                .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("CommandFor: " + url))
                 .andThreadPoolPropertiesDefaults(HystrixThreadPoolProperties.Setter().withCoreSize(5))
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(5_000));
             this.url = url;

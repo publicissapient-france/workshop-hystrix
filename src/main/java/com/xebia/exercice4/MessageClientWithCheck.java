@@ -1,7 +1,8 @@
 package com.xebia.exercice4;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey.Factory;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.exception.HystrixBadRequestException;
 import com.xebia.MessageApi;
 
@@ -14,13 +15,18 @@ public class MessageClientWithCheck {
 
     private final MessageApi messageApi;
 
-    public MessageClientWithCheck(MessageApi messageApi) {
+    private final HystrixCommand.Setter setter;
+
+    MessageClientWithCheck(MessageApi messageApi) {
         this.messageApi = messageApi;
+        this.setter = HystrixCommand.Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise4"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("MessageWithCheck"));
     }
 
     public String getMessage(String userName) {
 
-        return new HystrixCommand<String>(Factory.asKey("MessageWithCheck")) {
+        return new HystrixCommand<String>(setter) {
 
             @Override
             public String run() throws Exception {

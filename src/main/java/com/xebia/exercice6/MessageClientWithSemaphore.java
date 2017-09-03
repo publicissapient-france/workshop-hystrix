@@ -17,13 +17,11 @@ public class MessageClientWithSemaphore {
 
     private final HystrixCommand.Setter setter;
 
-
-    public MessageClientWithSemaphore(MessageApi messageApi) {
+    MessageClientWithSemaphore(MessageApi messageApi) {
         this.messageApi = messageApi;
-
         this.setter = HystrixCommand.Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("GroupKey"))
-            .andCommandKey(HystrixCommandKey.Factory.asKey("CommandKey"))
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise6"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("MessageClientWithSemaphore"))
             .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                 .withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE)
                 .withExecutionIsolationSemaphoreMaxConcurrentRequests(2)

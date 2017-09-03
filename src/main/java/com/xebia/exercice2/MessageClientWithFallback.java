@@ -2,6 +2,7 @@ package com.xebia.exercice2;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.xebia.MessageApi;
 
@@ -13,17 +14,19 @@ public class MessageClientWithFallback {
 
     private final MessageApi messageApi;
 
-    public MessageClientWithFallback(MessageApi messageApi) {
+    private HystrixCommand.Setter setter;
+
+    MessageClientWithFallback(MessageApi messageApi) {
         this.messageApi = messageApi;
-    }
-
-    public String getMessage(String userName) {
-
-        HystrixCommand.Setter setter = HystrixCommand.Setter
-            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("MessageWithFallback"))
+        this.setter = HystrixCommand.Setter
+            .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise2"))
+            .andCommandKey(HystrixCommandKey.Factory.asKey("MessageClientWithFallback"))
             .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
                 .withExecutionTimeoutInMilliseconds(300)
             );
+    }
+
+    public String getMessage(String userName) {
 
         return new HystrixCommand<String>(setter) {
 
