@@ -46,6 +46,11 @@ public class MessageClientWithCollapser {
         @Override
         public HystrixCommand<Map<String, String>> createCommand(Collection<CollapsedRequest<String, String>> requests) {
 
+            return batchCommand(requests);
+
+        }
+
+        private HystrixCommand<Map<String, String>> batchCommand(Collection<CollapsedRequest<String, String>> requests) {
             return new HystrixCommand<Map<String, String>>(setter) {
 
                 @Override
@@ -57,7 +62,6 @@ public class MessageClientWithCollapser {
                 }
 
             };
-
         }
 
         @Override
@@ -73,7 +77,7 @@ public class MessageClientWithCollapser {
 
     }
 
-    public List<Future<String>> getMessage(List<String> userNames) throws Exception {
+    public List<Future<String>> getMessage(List<String> userNames) {
 
         return userNames.stream()
             .map(Collapser::new)
