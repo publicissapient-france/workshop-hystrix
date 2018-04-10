@@ -23,7 +23,7 @@ public class MessageClientWithCircuitBreaker {
             .withGroupKey(HystrixCommandGroupKey.Factory.asKey("Exercise6"))
             .andCommandKey(HystrixCommandKey.Factory.asKey("MessageClientWithCircuitBreaker"))
             .andCommandPropertiesDefaults(HystrixCommandProperties.defaultSetter()
-                .withCircuitBreakerSleepWindowInMilliseconds(2_000) // circuit wil close 2 seconds after being opened
+                .withCircuitBreakerSleepWindowInMilliseconds(2_000) // circuit will close 2 seconds after being opened
                 .withCircuitBreakerRequestVolumeThreshold(5) // 5 request are required to start counting errors
                 .withCircuitBreakerErrorThresholdPercentage(50) // 50% error rate
                 .withMetricsRollingStatisticalWindowInMilliseconds(1000) // in a window of 1 second
